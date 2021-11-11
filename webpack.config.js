@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const TerserJSPlugin = require('terser-webpack-plugin');
+// const TerserJSPlugin = require('terser-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const CnameWebpackPlugin = require('cname-webpack-plugin');
 const settings = require('./settings');
@@ -15,11 +15,6 @@ const publicPath = mode === 'production' ? settings.repoPath || '/' : '/';
 module.exports = {
   mode,
 
-  optimization: {
-    minimizer: [new TerserJSPlugin({})],
-    runtimeChunk: 'single',
-  },
-
   devServer: {
     port,
     compress: true,
@@ -31,7 +26,7 @@ module.exports = {
     open: true,
   },
 
-  devtool: mode === 'production' ? false : 'eval',
+  devtool: mode === 'production' ? false : 'eval-cheap-module-source-map',
 
   entry:
     mode === 'production'
@@ -45,12 +40,16 @@ module.exports = {
   output: {
     path: output,
     filename: '[name].js',
+    chunkFilename: '[name].bundle.js',
     publicPath,
   },
 
   resolve: {
     modules: [path.join(__dirname, './node_modules')],
-    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+    alias: {
+      src: path.resolve(__dirname, 'src/')
+    }
   },
 
   module: {
@@ -59,7 +58,11 @@ module.exports = {
         test: /\.(ts|tsx|js|jsx)$/,
         exclude: /node_modules/,
         include: path.join(__dirname, './src'),
-        use: 'ts-loader',
+        loader: 'esbuild-loader',
+        options: {
+          loader: 'tsx',
+          target: 'es2015'
+        }
       },
 
       {
@@ -99,9 +102,6 @@ module.exports = {
             <title>${settings.title}</title>
           </head>
           <body>
-            <noscript>
-              Enable JavaScript to use Frontend toolbox
-            </noscript>
 
             <div id="app"></div>
             ${htmlWebpackPlugin.tags.bodyTags}

@@ -9,7 +9,7 @@ This boilerplate introduces a simple way for developing serverless React applica
 - [Webpack@5](https://webpack.js.org/) as module bundler
 - [Eslint](http://eslint.org/) for linting
 - [Prettier](https://prettier.io/) for automated code formatting
-- [Jest](https://facebook.github.io/jest/) with [Enzyme](http://airbnb.io/enzyme/) for testing
+- [Jest](https://facebook.github.io/jest/)
 
 ## Getting started
 

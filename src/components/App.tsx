@@ -1,16 +1,29 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { HashRouter, Route, Switch } from "react-router-dom";
 import HomePage from "./routes/home/HomePage";
 import { PlayerPage } from "./routes/player/PlayerPage";
 import settings from "../../settings";
+import { createGlobalStyle } from "styled-components";
+
+const GlobalStyle = createGlobalStyle`
+  html {
+    height: 100%;
+  }
+  body {
+    height: 100%;
+  }
+`;
 
 export default function App() {
   return (
-    <BrowserRouter basename={settings.repoPath}>
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route exact path="/player/:id" component={PlayerPage} />
-      </Switch>
-    </BrowserRouter>
+    <>
+      <GlobalStyle />
+      <HashRouter basename={settings.repoPath}>
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route path="/comparison" component={PlayerPage} />
+        </Switch>
+      </HashRouter>
+    </>
   );
 }
