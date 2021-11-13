@@ -4,6 +4,7 @@ import cheerioTableParser from "cheerio-tableparser";
 import { unzip } from "lodash";
 import { GameLog } from "./types";
 import { parseUnit } from "./unitParsing";
+import axios from "axios";
 
 export const getPlayerGameLogTable = async (
   playerId: string,

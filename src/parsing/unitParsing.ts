@@ -7,18 +7,10 @@ const ageParser = (v: string): number => {
   return Number(year) + Number(days) / 365;
 };
 
-interface NBAMinutes {
-  minutes: number;
-  seconds: number;
-}
-
-const minutesParser = (v: string): NBAMinutes => {
+const minutesParser = (v: string): number => {
   const [minutes, seconds] = v.split(":");
 
-  return {
-    minutes: Number(minutes),
-    seconds: Number(minutes),
-  };
+  return Number(minutes) + Number(seconds) / 60;
 };
 
 const parsingMap = {
