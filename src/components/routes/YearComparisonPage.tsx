@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import { useParams } from "react-router";
-import { NAMES } from "../../../parsing/NAMES";
-import { FasterSelect } from "../../FasterSelect";
+import { FasterSelect } from "src/components/FasterSelect";
 import useSWR from "swr";
 import { StatLiteral, timeSeriesAverageStats } from "src/parsing/nbaStatUtils";
-import { fetchRookiesGameLogs } from "src/parsing/fetchRookieGameLogs";
 import { LineGraph } from "src/components/LineGraph";
 import styled from "styled-components";
 import { playerLogsToLineData } from "src/parsing/playerLogsToLineData";
+import { range } from "lodash";
+import { fetchAllRookieGameLogsFromYears } from "src/parsing/fetchAllRookieGameLogsFromYear";
 
 const GraphContainer = styled.div`
   display: grid;
@@ -38,23 +37,29 @@ interface SelectOption {
   label: string;
 }
 
-const selectOptions = NAMES.map((o) => ({ value: o, label: o }));
+const selectOptions = range(2015, 2022).map((n) => ({
+  value: n.toString(),
+  label: n.toString(),
+}));
 
-export const PlayerPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+export const YearComparisonPage: React.FC = () => {
   const [selected, setSelected] = useState<SelectOption[]>();
 
-  const names = selected?.map((o) => o.value) || [];
+  const years = selected?.map((o) => o.value) || [];
+  console.log("selected: ", selected);
+  console.log("years: ", years);
+  console.log('years?.join("|"): ', years?.join("|"));
 
   const { data: glogs = [] } = useSWR(
-    names?.join("|") || null,
-    fetchRookiesGameLogs
+    years?.join("|") || null,
+    fetchAllRookieGameLogsFromYears
   );
+  console.log("glogs: ", glogs);
 
   return (
     <div>
       <h1 style={{ fontSize: 50, fontWeight: "bold", textAlign: "center" }}>
-        Player {id}
+        Years
       </h1>
       <FasterSelect
         isMulti
@@ -67,7 +72,7 @@ export const PlayerPage: React.FC = () => {
           return (
             <LineGraph
               data={playerLogsToLineData(
-                names,
+                years,
                 glogs.map(timeSeriesAverageStats),
                 statLiteral
               )}
