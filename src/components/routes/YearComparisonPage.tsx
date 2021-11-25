@@ -3,15 +3,10 @@ import { FasterSelect } from "src/components/FasterSelect";
 import useSWR from "swr";
 import { StatLiteral, timeSeriesAverageStats } from "src/parsing/nbaStatUtils";
 import { LineGraph } from "src/components/LineGraph";
-import styled from "styled-components";
 import { playerLogsToLineData } from "src/parsing/playerLogsToLineData";
 import { range } from "lodash";
-import { fetchAllRookieGameLogsFromYears } from "src/parsing/fetchAllRookieGameLogsFromYear";
-
-const GraphContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-`;
+import { fetchAllRookieGamesLogsFromYears } from "src/parsing/fetchAllRookieGameLogsFromYear";
+import { GraphContainer } from "src/components/GraphContainer";
 
 const desiredStats: StatLiteral[] = [
   "PTS",
@@ -52,7 +47,7 @@ export const YearComparisonPage: React.FC = () => {
 
   const { data: glogs = [] } = useSWR(
     years?.join("|") || null,
-    fetchAllRookieGameLogsFromYears
+    fetchAllRookieGamesLogsFromYears
   );
   console.log("glogs: ", glogs);
 

@@ -1,4 +1,4 @@
-import { GameLog } from "./parsing/types";
+import { GameLog } from "src/parsing/types";
 
 export const fetchAllRookieGamesLogsFromYears = async (
   years: string

@@ -5,6 +5,7 @@ export const playerLogsToLineData = (
   timeSeriesStats: Record<string, number>[][] = [],
   desiredStat: StatLiteral
 ) => {
+  console.debug("timeSeriesStats: ", timeSeriesStats);
   const lineGraphData = timeSeriesStats.reduce((allData, playerData, i) => {
     const name = names[i];
 

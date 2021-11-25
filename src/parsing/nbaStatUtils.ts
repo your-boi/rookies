@@ -26,6 +26,9 @@ export type StatLiteral =
   | typeof SUMMABLE_STATS[number]
   | typeof PERCENTAGE_STATS[number];
 
+export const isPercentageStat = (stat: string) =>
+  PERCENTAGE_STATS.includes(stat as typeof PERCENTAGE_STATS[number]);
+
 const summableSet = new Set(SUMMABLE_STATS);
 const countableStats: Partial<
   { gamesPlayed: number } & {
@@ -110,7 +113,7 @@ export const timeSeriesAverageStats = (logs: GameLog[]): CountableStats[] => {
       }
       const entry = { ...acc };
       SUMMABLE_STATS.forEach((stat) => {
-        entry[stat] = Number((entry[stat] / entry.gamesPlayed).toFixed(2));
+        entry[stat] = Number(entry[stat] / entry.gamesPlayed);
       });
 
       PERCENTAGE_STATS.forEach((stat) => {
@@ -118,7 +121,7 @@ export const timeSeriesAverageStats = (logs: GameLog[]): CountableStats[] => {
         const [rawKey] = stat.split("%");
         const attemptedKey = `${rawKey}A`;
 
-        entry[stat] = Number((entry[rawKey] / entry[attemptedKey]).toFixed(2));
+        entry[stat] = Number((entry[rawKey] / entry[attemptedKey]).toFixed(3));
       });
 
       delete entry.GS;

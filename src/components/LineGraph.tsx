@@ -10,6 +10,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { StatLiteral } from "src/parsing/nbaStatUtils";
+import { LegendContext } from "./LegendContext";
+import { LineGraphTooltip } from "./LineGraphTooltip";
 
 interface Props {
   data?: {
@@ -20,6 +22,8 @@ interface Props {
 }
 
 export const LineGraph: React.FC<Props> = ({ data }) => {
+  const { highlightedKey, onLegendMouseEnter, onLegendMouseLeave } =
+    React.useContext(LegendContext);
   const { lineGraphData, desiredStat, names } = data || {};
   return (
     <div style={{ width: "500px" }}>
@@ -40,18 +44,28 @@ export const LineGraph: React.FC<Props> = ({ data }) => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="game" />
           <YAxis />
-          <Tooltip isAnimationActive={false} />
+          <Tooltip
+            content={<LineGraphTooltip statType={desiredStat} />}
+            isAnimationActive={false}
+          />
           <Legend
-          // onMouseEnter={this.handleMouseEnter}
-          // onMouseLeave={this.handleMouseLeave}
+            onMouseOver={onLegendMouseEnter}
+            onMouseOut={onLegendMouseLeave}
           />
           {names.map((name, i) => {
+            const strokeOpacity = highlightedKey
+              ? highlightedKey === name
+                ? 1
+                : 0.3
+              : 0.8;
             return (
               <Line
                 type="monotone"
                 dataKey={name}
                 stroke={`hsl(${(i * 30) % 360}, 70%, 50%)`}
-                activeDot={{ r: 8 }}
+                strokeOpacity={strokeOpacity}
+                isAnimationActive={false}
+                activeDot={{ r: 6 }}
               />
             );
           })}

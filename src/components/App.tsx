@@ -8,10 +8,16 @@ import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   html {
+    font-family: 'Outfit', sans-serif;
     height: 100%;
   }
   body {
     height: 100%;
+  }
+  p {
+    margin-block-start:0; margin-block-end:0; margin-inline-start:0; margin-inline-end:0;
+    padding-block-start:0; padding-block-end:0; padding-inline-start:0; padding-inline-end:0;
+
   }
 `;
 
