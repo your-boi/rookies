@@ -156,3 +156,5 @@ export const aggregateGameLogsToAverageStats = (
   delete stats.GS;
   return stats;
 };
+
+export const amalgamatePlayers = (players: GameLog[][]) => {};
