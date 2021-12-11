@@ -27,7 +27,7 @@ export default function App() {
       <GlobalStyle />
       <HashRouter basename={settings.repoPath}>
         <Switch>
-          <Route exact path="/" component={HomePage} />
+          <Route exact path="/" component={PlayerPage} />
           <Route path="/comparison" component={PlayerPage} />
           <Route path="/year" component={YearComparisonPage} />
         </Switch>

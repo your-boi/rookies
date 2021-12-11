@@ -4,7 +4,14 @@ import styled from "styled-components";
 
 const GraphGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: auto auto auto;
+  grid-gap: 8px;
+
+  @media screen and (max-width: 1024px) {
+    grid-template-columns: auto;
+  }
+}
+
 `;
 
 export const GraphContainer: React.FC = ({ children }) => {

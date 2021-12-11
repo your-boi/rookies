@@ -24,7 +24,9 @@ const GraphTitle = styled.div`
 
 const GraphGrid = styled.div`
   padding: 8px;
+  min-width: 30vw;
   border: 1px solid hsl(0, 0%, 80%);
+  border-radius: 4px;
 `;
 interface Props {
   data?: {
