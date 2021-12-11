@@ -12,6 +12,10 @@ const PlayerStat = styled.p`
   padding-top: 2px;
 `;
 
+const sorter = (a, b) => {
+  return b.value - a.value;
+};
+
 export const LineGraphTooltip = ({ statType = "", payload, label }) => {
   if (payload && payload.length) {
     return (
@@ -19,7 +23,7 @@ export const LineGraphTooltip = ({ statType = "", payload, label }) => {
         <p>
           {label} Game{label !== 1 ? "s" : ""} Played
         </p>
-        {payload.map((p) => {
+        {payload.sort(sorter).map((p) => {
           return (
             <PlayerStat>
               <span style={{ color: p.stroke }}>{p.name}: </span>

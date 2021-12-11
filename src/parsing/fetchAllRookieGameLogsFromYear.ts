@@ -2,10 +2,9 @@ import { GameLog } from "src/parsing/types";
 
 export const fetchAllRookieGamesLogsFromYears = async (
   years: string
-): Promise<GameLog[][]> => {
+): Promise<GameLog[][][]> => {
   const promises = [];
   const yearsSplit = years.split("|");
-  console.log("lmao", years);
 
   yearsSplit.forEach((year) => {
     promises.push(fetchAllRookieGameLogsFromYear(year));
@@ -16,15 +15,16 @@ export const fetchAllRookieGamesLogsFromYears = async (
 
 export const fetchAllRookieGameLogsFromYear = async (
   year: string
-): Promise<GameLog[]> => {
+): Promise<GameLog[][]> => {
   return new Promise((res, rej) => {
     import(`src/parsing/hardcodedData/RookieGameLogs-${year}.json`)
       .then((module) => {
         const playerList = module.default;
-        const logs = playerList?.reduce((acc, player) => {
-          acc.push(...player.logs);
-          return acc;
-        }, [] as GameLog[]);
+        const logs = playerList?.map((p) => p.logs);
+        // const logs = playerList?.reduce((acc, player) => {
+        //   acc.push(...player.logs);
+        //   return acc;
+        // }, [] as GameLog[]);
         console.log("fetching logs", logs);
 
         if (!logs) {

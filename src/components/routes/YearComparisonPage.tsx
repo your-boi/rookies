@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { FasterSelect } from "src/components/FasterSelect";
 import useSWR from "swr";
-import { StatLiteral, timeSeriesAverageStats } from "src/parsing/nbaStatUtils";
+import {
+  amalgamatePlayers,
+  StatLiteral,
+  timeSeriesAverageStats,
+  timeSeriesCountableStats,
+} from "src/parsing/nbaStatUtils";
 import { LineGraph } from "src/components/LineGraph";
 import { playerLogsToLineData } from "src/parsing/playerLogsToLineData";
 import { range } from "lodash";
@@ -32,7 +37,7 @@ interface SelectOption {
   label: string;
 }
 
-const selectOptions = range(2015, 2022).map((n) => ({
+const selectOptions = range(1950, 2022).map((n) => ({
   value: n.toString(),
   label: n.toString(),
 }));
@@ -41,15 +46,15 @@ export const YearComparisonPage: React.FC = () => {
   const [selected, setSelected] = useState<SelectOption[]>();
 
   const years = selected?.map((o) => o.value) || [];
-  console.log("selected: ", selected);
-  console.log("years: ", years);
-  console.log('years?.join("|"): ', years?.join("|"));
+  // console.log("selected: ", selected);
+  // console.log("years: ", years);
+  // console.log('years?.join("|"): ', years?.join("|"));
 
   const { data: glogs = [] } = useSWR(
     years?.join("|") || null,
     fetchAllRookieGamesLogsFromYears
   );
-  console.log("glogs: ", glogs);
+  const amalgamatted = glogs.map(amalgamatePlayers);
 
   return (
     <div>
@@ -68,7 +73,7 @@ export const YearComparisonPage: React.FC = () => {
             <LineGraph
               data={playerLogsToLineData(
                 years,
-                glogs.map(timeSeriesAverageStats),
+                amalgamatted.map(timeSeriesCountableStats),
                 statLiteral
               )}
             />

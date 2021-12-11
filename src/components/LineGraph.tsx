@@ -46,16 +46,22 @@ export const LineGraph: React.FC<Props> = ({ data }) => {
             height={400}
             data={lineGraphData || []}
             margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 10,
+              top: 20,
+              bottom: 20,
             }}
           >
-            <Legend verticalAlign="bottom" />
+            <Legend verticalAlign="top" />
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="game" />
-            <YAxis />
+            <XAxis
+              label={{
+                value: "Games Played",
+                position: "bottom",
+              }}
+              dataKey="game"
+            />
+            <YAxis
+              label={{ value: desiredStat, angle: -90, position: "insideLeft" }}
+            />
             <Tooltip
               content={<LineGraphTooltip statType={desiredStat} />}
               isAnimationActive={false}
@@ -63,6 +69,7 @@ export const LineGraph: React.FC<Props> = ({ data }) => {
             {names.map((name, i) => {
               return (
                 <Line
+                  key={name}
                   type="monotone"
                   dataKey={name}
                   stroke={`hsl(${(i * 37) % 360}, 70%, 50%)`}

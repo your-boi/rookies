@@ -18,6 +18,7 @@ const SUMMABLE_STATS = [
   "TOV",
   "PF",
   "PTS",
+  "+/-",
   "GmSc",
 ] as const;
 
@@ -136,6 +137,63 @@ export const timeSeriesAverageStats = (logs: GameLog[]): CountableStats[] => {
   return timeseries;
 };
 
+export const timeSeriesRollingAverageStats = (
+  logs: GameLog[],
+  n: number
+): CountableStats[] => {
+  const timeseries = [];
+  const rollingWindow = [];
+  logs.reduce(
+    (acc, log, i) => {
+      const entries = Object.entries(log);
+      if (log.DNP) {
+        return acc;
+      }
+      acc.gamesPlayed += 1;
+
+      if (rollingWindow.length >= n) {
+        const entryToRemove = rollingWindow[0];
+        for (const [stat, value] of entryToRemove) {
+          if (summableSet.has(stat)) {
+            acc[stat] -= value;
+          }
+        }
+        rollingWindow.shift();
+      }
+
+      rollingWindow.push(entries);
+
+      for (const [stat, value] of entries) {
+        if (summableSet.has(stat)) {
+          acc[stat] += value;
+        }
+      }
+      const entry = { ...acc };
+
+      SUMMABLE_STATS.forEach((stat) => {
+        const divisor = rollingWindow.length >= n ? n : entry.gamesPlayed;
+        entry[stat] = Number(entry[stat] / divisor);
+      });
+      PERCENTAGE_STATS.forEach((stat) => {
+        // hack
+        const [rawKey] = stat.split("%");
+        const attemptedKey = `${rawKey}A`;
+
+        entry[stat] = Number((entry[rawKey] / entry[attemptedKey]).toFixed(3));
+      });
+
+      delete entry.GS;
+
+      timeseries.push(entry);
+
+      return acc;
+    },
+    { ...countableStats }
+  );
+
+  return timeseries;
+};
+
 export const aggregateGameLogsToAverageStats = (
   logs: GameLog[]
 ): AverageStats => {
@@ -157,4 +215,54 @@ export const aggregateGameLogsToAverageStats = (
   return stats;
 };
 
-export const amalgamatePlayers = (players: GameLog[][]) => {};
+// assume all players are in a given year
+export const amalgamatePlayers = (players: GameLog[][]) => {
+  const allInOne = players.reduce((acc, gamelogs) => {
+    for (let i = 0; i < gamelogs.length; i++) {
+      const glog = gamelogs[i];
+      if (glog.DNP) {
+        continue;
+      }
+
+      if (!acc[i]) {
+        acc[i] = { ...glog };
+        continue;
+      }
+
+      for (const stat of SUMMABLE_STATS) {
+        acc[i][stat] += glog[stat];
+      }
+    }
+    return acc;
+  }, []);
+
+  // add in percentage stats
+  for (const log of allInOne) {
+    if (!log) {
+      continue;
+    }
+    PERCENTAGE_STATS.forEach((stat) => {
+      // hack
+      const [rawKey] = stat.split("%");
+      const attemptedKey = `${rawKey}A`;
+
+      log[stat] = log[rawKey] / log[attemptedKey];
+    });
+  }
+
+  // clean up evrey other stat
+
+  return allInOne.map((s) => {
+    const n = {};
+
+    SUMMABLE_STATS.forEach((a) => {
+      n[a] = s[a];
+    });
+
+    PERCENTAGE_STATS.forEach((a) => {
+      n[a] = s[a];
+    });
+
+    return n;
+  });
+};
